@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: ./server
+    container_name: taskappserverC
+    env_file:
+      - ./server/.env
+    ports:
+      - "300:300"
+    networks:
+      - taskapp-net
+
+  client:
+    build:
+      context: ./client
+    container_name: taskappC
+    environment:
+      VITE_API_PROXY_TARGET: http://server:300
+    ports:
+      - "500:500"
+    depends_on:
+      - server
+    networks:
+      - taskapp-net
+
+networks:
+  taskapp-net:
+    driver: bridge
