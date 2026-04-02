@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
     server: {
       host: '0.0.0.0',
       port: Number(env.VITE_PORT || env.CLIENT_PORT || 500),
+      allowedHosts: true,
       proxy: {
         '/tasks': {
           target: env.VITE_API_PROXY_TARGET || 'http://localhost:300',
