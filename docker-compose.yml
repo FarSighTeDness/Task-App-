@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: t11-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/config/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    image: node:20-alpine
+    container_name: t11-server
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    environment:
+      PORT: ${SERVER_PORT}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+    volumes:
+      - ./server:/app
+      - server_node_modules:/app/node_modules
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  client:
+    image: node:20-alpine
+    container_name: t11-client
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port $CLIENT_PORT"
+    environment:
+      VITE_API_PROXY_TARGET: http://server:${SERVER_PORT}
+      VITE_PORT: ${CLIENT_PORT}
+    volumes:
+      - ./client/react:/app
+      - client_node_modules:/app/node_modules
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:
+  server_node_modules:
+  client_node_modules:
