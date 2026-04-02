@@ -1,46 +1,17 @@
 // db.js
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pkg from 'pg';
+import dotenv from 'dotenv';
 
 const { Client } = pkg;
-
-function loadEnvFile(envPath) {
-  if (!fs.existsSync(envPath)) {
-    return;
-  }
-
-  const raw = fs.readFileSync(envPath, 'utf8');
-  const lines = raw.split(/\r?\n/);
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-
-    if (!trimmed || trimmed.startsWith('#')) {
-      continue;
-    }
-
-    const eqIndex = trimmed.indexOf('=');
-    if (eqIndex === -1) {
-      continue;
-    }
-
-    const key = trimmed.slice(0, eqIndex).trim();
-    const value = trimmed.slice(eqIndex + 1).trim();
-
-    if (key && process.env[key] === undefined) {
-      process.env[key] = value;
-    }
-  }
-}
 
 function loadEnvFromRoot() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
 
-  loadEnvFile(path.resolve(__dirname, '../../.env'));
-  loadEnvFile(path.resolve(__dirname, '../.env'));
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+  dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false });
 }
 
 loadEnvFromRoot();

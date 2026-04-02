@@ -1,4 +1,5 @@
 // server.js
+import 'dotenv/config';
 import express from 'express';
 import usersRouter from '../routes/users.js';
 import { logger } from '../middleware/logger.js';
