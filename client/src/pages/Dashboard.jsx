@@ -38,7 +38,7 @@ export default function Dashboard() {
       <button
         type="button"
         onClick={() => setSidebarOpen((prev) => !prev)}
-        className="fixed left-0 z-40 px-3 py-2 bg-white border border-l-0 shadow top-24 rounded-r-md border-slate-400"
+        className="fixed left-0 top-1/2 z-40 -translate-y-1/2 px-3 py-2 bg-white border border-l-0 shadow rounded-r-md border-slate-400"
         aria-label="Open and close menu"
       >
         <span className="block h-0.5 w-5 bg-slate-700" />
