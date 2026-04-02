@@ -22,8 +22,8 @@ export default function TaskList({ tasks, setTasks }) {
 
   const handleSaveEdit = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/tasks/${id}`, {
-        method: "PATCH",
+      const res = await fetch(`/tasks/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
       });
@@ -43,7 +43,7 @@ export default function TaskList({ tasks, setTasks }) {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/tasks/${id}`, { method: "DELETE" });
+      const res = await fetch(`/tasks/${id}`, { method: "DELETE" });
 
       if (!res.ok) {
         throw new Error(`Request failed with status ${res.status}`);
@@ -64,28 +64,31 @@ export default function TaskList({ tasks, setTasks }) {
   };
 
   return (
-    <div className="bg-white p-4 shadow rounded">
-      <h2 className="text-lg font-bold mb-2">Tasks</h2>
-      {tasks.map((task) => (
-        <div key={task.id} className="border-b py-2">
-          <div className="flex justify-between items-center gap-2">
-            <p className="font-semibold">{task.name}</p>
+    <div className="p-4 bg-white rounded shadow">
+      <h2 className="mb-2 text-lg font-bold">Tasks</h2>
+      {tasks.map((task, index) => (
+        <div key={task.id} className="py-2 border-b">
+          <div className="flex items-center justify-between gap-2">
+            <p className="font-semibold">
+              <span className="mr-2 text-gray-500">{index + 1}.</span>
+              {task.name}
+            </p>
             <div className="flex gap-2">
               <button
                 onClick={() => handleView(task.id)}
-                className="bg-slate-600 text-white px-3 py-1 rounded"
+                className="px-3 py-1 text-white rounded bg-slate-600"
               >
                 {viewingId === task.id ? "Hide" : "View"}
               </button>
               <button
                 onClick={() => startEdit(task)}
-                className="bg-amber-500 text-white px-3 py-1 rounded"
+                className="px-3 py-1 text-white rounded bg-amber-500"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(task.id)}
-                className="bg-red-500 text-white px-3 py-1 rounded"
+                className="px-3 py-1 text-white bg-red-500 rounded"
               >
                 Delete
               </button>
@@ -100,21 +103,21 @@ export default function TaskList({ tasks, setTasks }) {
           )}
 
           {editingId === task.id && (
-            <div className="mt-3 bg-gray-50 p-3 rounded border">
+            <div className="p-3 mt-3 border rounded bg-gray-50">
               <input
-                className="border p-2 w-full mb-2"
+                className="w-full p-2 mb-2 border"
                 placeholder="Name"
                 value={editForm.name}
                 onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
               />
               <input
-                className="border p-2 w-full mb-2"
+                className="w-full p-2 mb-2 border"
                 placeholder="Email"
                 value={editForm.emailid}
                 onChange={(e) => setEditForm((prev) => ({ ...prev, emailid: e.target.value }))}
               />
               <input
-                className="border p-2 w-full mb-3"
+                className="w-full p-2 mb-3 border"
                 placeholder="Task"
                 value={editForm.task}
                 onChange={(e) => setEditForm((prev) => ({ ...prev, task: e.target.value }))}
@@ -122,13 +125,13 @@ export default function TaskList({ tasks, setTasks }) {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleSaveEdit(task.id)}
-                  className="bg-green-600 text-white px-3 py-1 rounded"
+                  className="px-3 py-1 text-white bg-green-600 rounded"
                 >
                   Save
                 </button>
                 <button
                   onClick={cancelEdit}
-                  className="bg-gray-400 text-white px-3 py-1 rounded"
+                  className="px-3 py-1 text-white bg-gray-400 rounded"
                 >
                   Cancel
                 </button>
